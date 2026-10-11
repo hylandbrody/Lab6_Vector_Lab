@@ -100,6 +100,7 @@ int main(void)
                     printf("Vector memory full.\n");
                 }
             }
+            
             /* Assign a vector multiplied by a scalar */
             else if (sscanf(userinputs, " %7s = %7s %c %f",
                             name, name1, &op, &scalar) == 4

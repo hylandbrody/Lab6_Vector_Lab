@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "vectorMath.h"
+#include "myVect.h"
 
 #define MAX_VECTORS 10
 
@@ -40,8 +41,23 @@ int main(void)
                     userinputs[i] = ' ';
                 }
             }
+            if(strcmp(userinputs, "help") == 0)
+            {
+                printf("quit - to exit \n");
+                printf("clear - to clear vectors \n");
+                printf("list - to list vectors \n");
+                printf("dot vector1 vector2 - to get dot product of 2 vectors \n");
+                printf("cross vector1 vector2 - to get cross product of 2 vectors \n");
+                printf("vector1 = vector2 + vector3 - to set vector1 equal to vector2 + vector3 \n");
+                printf("vector1 = vector2 - vector3 - to set vector1 equal to vector2 - vector3 \n");
+                printf("vector1 = vector2 * constant - to set vector1 equal to vector2 * constant \n");
+                printf("vector = constant constant constant - to create a vector \n");
+                printf("vector1 + vector2 - to show the product of vector1 + vector2 \n");
+                printf("vector1 - vector2 - to show the product of vector1 - vector2 \n");
+                printf("vector * constant - to show the product of vector + constant \n");
+            }
 
-            if (strcmp(userinputs, "quit") == 0)
+            else if (strcmp(userinputs, "quit") == 0)
             {
                 q = 1;
             }
@@ -100,7 +116,6 @@ int main(void)
                     printf("Vector memory full.\n");
                 }
             }
-
             /* Assign a vector multiplied by a scalar */
             else if (sscanf(userinputs, " %7s = %7s %c %f",
                             name, name1, &op, &scalar) == 4
@@ -125,7 +140,6 @@ int main(void)
                     printf("Vector %s not found.\n", name1);
                 }
             }
-            
             /* Assign a scalar multiplied by a vector */
             else if (sscanf(userinputs, " %7s = %f %c %7s",
                             name, &scalar, &op, name1) == 4
@@ -208,7 +222,7 @@ int main(void)
                     printf("Vector not found.\n");
                 }
             }
-            else if (sscanf(userinputs, " %7s %c %f",
+            else if (sscanf(userinputs, " %7s %c %f",       /*FiX*/
                             name1, &op, &scalar) == 3
                      && op == '*')
             {
@@ -223,6 +237,21 @@ int main(void)
                     printf("Vector %s not found.\n", name1);
                 }
             }
+            else if (sscanf(userinputs, " %f %c %7s",       /*FiX*/
+                            &scalar, &op, name1) == 3
+                     && op == '*')
+            {
+                if (findVect(vectors, name1, &a))
+                {
+                    result = mult(a, scalar);
+                    strcpy(result.name, "ans");
+                    showVect(result);
+                }
+                else
+                {
+                    printf("Vector %s not found.\n", name1);
+                }
+            }    
             else if (sscanf(userinputs, " %7s", name) == 1)
             {
                 if (findVect(vectors, name, &result))

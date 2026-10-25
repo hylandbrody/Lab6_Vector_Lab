@@ -7,14 +7,17 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "vectorMath.h"
 #include "myVect.h"
 
-#define MAX_VECTORS 10
 
 int main(void)
 {
-    Vect vectors[MAX_VECTORS] = {0};
+    Vect *vectors = NULL;
+    int vector_count = 0;
+    int vector_capacity = 0;
+
     Vect a, b, result;
     char userinputs[100];
     char name[8], name1[8], name2[8];
@@ -63,18 +66,18 @@ int main(void)
             }
             else if (strcmp(userinputs, "clear") == 0)
             {
-                clear(vectors);
+                clear(&vectors, &vector_count, &vector_capacity);
                 printf("Vectors cleared.\n");
             }
             else if (strcmp(userinputs, "list") == 0)
             {
-                list(vectors);
+                list(vectors, vector_count);
             }
             else if (sscanf(userinputs, "dot %7s %7s",
                             name1, name2) == 2)
             {
-                if (findVect(vectors, name1, &a) &&
-                    findVect(vectors, name2, &b))
+                if (findVect(vectors, vector_count, name1, &a) &&
+                    findVect(vectors, vector_count, name2, &b))
                 {
                     printf("ans = %g\n", dot(a, b));
                 }
@@ -86,8 +89,8 @@ int main(void)
             else if (sscanf(userinputs, "cross %7s %7s",
                             name1, name2) == 2)
             {
-                if (findVect(vectors, name1, &a) &&
-                    findVect(vectors, name2, &b))
+                if (findVect(vectors, vector_count, name1, &a) &&
+                    findVect(vectors, vector_count, name2, &b))
                 {
                     result = cross(a, b);
                     strcpy(result.name, "ans");
@@ -107,13 +110,13 @@ int main(void)
                 result.y = y;
                 result.z = z;
 
-                if (storeVect(vectors, result))
+                if (storeVect(&vectors, &vector_count, &vector_capacity, result))
                 {
                     showVect(result);
                 }
                 else
                 {
-                    printf("Vector memory full.\n");
+                    printf("Unable to store vector.\n");
                 }
             }
             /* Assign a vector multiplied by a scalar */
@@ -121,20 +124,20 @@ int main(void)
                             name, name1, &op, &scalar) == 4
                      && op == '*')
             {
-                if (findVect(vectors, name1, &a))
+                if (findVect(vectors, vector_count, name1, &a))
                 {
                     result = mult(a, scalar);
                     strcpy(result.name, name);
 
-                    if (storeVect(vectors, result))
+                    if (storeVect(&vectors, &vector_count, &vector_capacity, result))
                     {
                         showVect(result);
                     }
                     else
                     {
-                        printf("Vector memory full.\n");
+                        printf("Unable to store vector.\n");
                     }
-                }
+                }    
                 else
                 {
                     printf("Vector %s not found.\n", name1);
@@ -145,20 +148,20 @@ int main(void)
                             name, &scalar, &op, name1) == 4
                      && op == '*')
             {
-                if (findVect(vectors, name1, &a))
+                if (findVect(vectors, vector_count, name1, &a))
                 {
                     result = mult(a, scalar);
                     strcpy(result.name, name);
 
-                    if (storeVect(vectors, result))
+                    if (storeVect(&vectors, &vector_count, &vector_capacity, result))
                     {
                         showVect(result);
                     }
                     else
                     {
-                        printf("Vector memory full.\n");
+                        printf("Unable to store vector.\n");
                     }
-                }
+                }    
                 else
                 {
                     printf("Vector %s not found.\n", name1);
@@ -169,8 +172,8 @@ int main(void)
                             name, name1, &op, name2) == 4
                      && (op == '+' || op == '-'))
             {
-                if (findVect(vectors, name1, &a) &&
-                    findVect(vectors, name2, &b))
+                if (findVect(vectors, vector_count, name1, &a) &&
+                    findVect(vectors, vector_count, name2, &b))
                 {
                     if (op == '+')
                     {
@@ -183,13 +186,13 @@ int main(void)
 
                     strcpy(result.name, name);
 
-                    if (storeVect(vectors, result))
+                    if (storeVect(&vectors, &vector_count, &vector_capacity, result))
                     {
                         showVect(result);
                     }
                     else
                     {
-                        printf("Vector memory full.\n");
+                    printf("Unable to store vector.\n");
                     }
                 }
                 else
@@ -202,8 +205,8 @@ int main(void)
                             name1, &op, name2) == 3
                      && (op == '+' || op == '-'))
             {
-                if (findVect(vectors, name1, &a) &&
-                    findVect(vectors, name2, &b))
+                if (findVect(vectors, vector_count, name1, &a) &&
+                    findVect(vectors, vector_count, name2, &b))
                 {
                     if (op == '+')
                     {
@@ -226,7 +229,7 @@ int main(void)
                             name1, &op, &scalar) == 3
                      && op == '*')
             {
-                if (findVect(vectors, name1, &a))
+                if (findVect(vectors, vector_count, name1, &a))
                 {
                     result = mult(a, scalar);
                     strcpy(result.name, "ans");
@@ -241,7 +244,7 @@ int main(void)
                             &scalar, &op, name1) == 3
                      && op == '*')
             {
-                if (findVect(vectors, name1, &a))
+                if (findVect(vectors, vector_count, name1, &a))
                 {
                     result = mult(a, scalar);
                     strcpy(result.name, "ans");
@@ -254,7 +257,7 @@ int main(void)
             }    
             else if (sscanf(userinputs, " %7s", name) == 1)
             {
-                if (findVect(vectors, name, &result))
+                if (findVect(vectors, vector_count, name, &result))
                 {
                     showVect(result);
                 }
@@ -270,5 +273,6 @@ int main(void)
         }
     }
 
+    clear(&vectors, &vector_count, &vector_capacity);
     return 0;
 }

@@ -7,68 +7,83 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "vectorMath.h"
 #include "myVect.h"
 
-void list(Vect vectors[])
+void list(Vect *vectors, int count)
 {
     int i;
 
-    for (i = 0; i < MAX_VECTORS; i++)
+    for (i = 0; i < count; i++)
     {
-        if (vectors[i].name[0] != '\0')
-        {
-            showVect(vectors[i]);
-        }
+        showVect(vectors[i]);
     }
 }
 
-void clear(Vect vectors[])
+void clear(Vect **vectors, int *count, int *capacity)
 {
-    int i;
-
-    for (i = 0; i < MAX_VECTORS; i++)
-    {
-        vectors[i].name[0] = '\0';
-    }
+    free(*vectors);
+    *vectors = NULL;
+    *count = 0;
+    *capacity = 0;
 }
 
-int storeVect(Vect vectors[], Vect newVect)
+int storeVect(Vect **vectors, int *count, int *capacity, Vect v)
 {
-    int i;
+     int i;
+    Vect *temp;
 
     /* Replace an existing vector */
-    for (i = 0; i < MAX_VECTORS; i++)
+    for (i = 0; i < *count; i++)
     {
-        if (strcmp(vectors[i].name, newVect.name) == 0 &&
-            vectors[i].name[0] != '\0')
+        if (strcmp((*vectors)[i].name, v.name) == 0)
         {
-            vectors[i] = newVect;
+            (*vectors)[i] = v;
             return 1;
         }
     }
 
-    /* Find an empty location */
-    for (i = 0; i < MAX_VECTORS; i++)
+    /* Expand the array if it is full */
+    if (*count == *capacity)
     {
-        if (vectors[i].name[0] == '\0')
+        int new_capacity;
+
+        if (*capacity == 0)
         {
-            vectors[i] = newVect;
-            return 1;
+            new_capacity = 4;
         }
+        else
+        {
+            new_capacity = *capacity * 2;
+        }
+
+        temp = realloc(*vectors,
+                       new_capacity * sizeof(Vect));
+
+        if (temp == NULL)
+        {
+            return 0;
+        }
+
+        *vectors = temp;
+        *capacity = new_capacity;
     }
 
-    return 0;
+    /* Add the new vector */
+    (*vectors)[*count] = v;
+    (*count)++;
+
+    return 1;
 }
 
-int findVect(Vect vectors[], char name[], Vect *result)
+int findVect(Vect *vectors, int count, char *name, Vect *result)
 {
     int i;
 
-    for (i = 0; i < MAX_VECTORS; i++)
+    for (i = 0; i < count; i++)
     {
-        if (strcmp(vectors[i].name, name) == 0 &&
-            vectors[i].name[0] != '\0')
+        if (strcmp(vectors[i].name, name) == 0)
         {
             *result = vectors[i];
             return 1;

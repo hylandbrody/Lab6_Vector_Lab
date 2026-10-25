@@ -1,10 +1,10 @@
 
 #include "myVect.h"
 
-void list(Vect vectors[]);
-void clear(Vect vectors[]);
-int storeVect(Vect vectors[], Vect newVect);
-int findVect(Vect vectors[], char name[], Vect *result);
+int storeVect(Vect **vectors, int *count, int *capacity, Vect v);
+int findVect(Vect *vectors, int count, char *name, Vect *result);
+void list(Vect *vectors, int count);
+void clear(Vect **vectors, int *count, int *capacity);
 void showVect(Vect a);
 
 Vect add(Vect a, Vect b);

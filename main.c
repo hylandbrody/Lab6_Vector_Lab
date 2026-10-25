@@ -10,10 +10,11 @@
 #include <stdlib.h>
 #include "vectorMath.h"
 #include "myVect.h"
-
+#include "fileIO.h"
 
 int main(void)
 {
+    char filename[100];
     Vect *vectors = NULL;
     int vector_count = 0;
     int vector_capacity = 0;
@@ -63,6 +64,15 @@ int main(void)
             else if (strcmp(userinputs, "quit") == 0)
             {
                 q = 1;
+            }
+            else if (sscanf(userinputs, "load %99s", filename) == 1)
+            {
+                loadVectFile(filename, &vectors,
+                            &vector_count, &vector_capacity);
+            }
+            else if (sscanf(userinputs, "save %99s", filename) == 1)
+            {
+                saveVectFile(filename, vectors, vector_count);
             }
             else if (strcmp(userinputs, "clear") == 0)
             {
